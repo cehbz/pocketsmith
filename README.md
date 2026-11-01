@@ -1,6 +1,6 @@
 # pocketsmith
 
-A Go client for the parts of [PocketSmith's v2 API](https://developers.pocketsmith.com/) its users need: the user's profile and time zone, listing and reading transactions, and updating a transaction's category, review flag and labels.
+A Go client for the parts of [PocketSmith's v2 API](https://developers.pocketsmith.com/) its users need: the user's profile and time zone, listing categories, listing and reading transactions, and updating a transaction's category, review flag and labels.
 
 ## Command
 
