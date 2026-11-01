@@ -26,6 +26,16 @@ func TestWriteLinesPrintsOneObjectPerTransaction(t *testing.T) {
 	}
 }
 
+func TestWriteLinesPrintsCharactersUnescaped(t *testing.T) {
+	var b bytes.Buffer
+	if err := writeLines(&b, []pocketsmith.Transaction{{ID: 1, Payee: "A&B <C>"}}); err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Contains(b.Bytes(), []byte(`"payee":"A&B <C>"`)) {
+		t.Errorf("got %s, want the payee unescaped", b.String())
+	}
+}
+
 func TestWriteLinesPrintsEmptyLabels(t *testing.T) {
 	var b bytes.Buffer
 	if err := writeLines(&b, []pocketsmith.Transaction{{ID: 1}}); err != nil {

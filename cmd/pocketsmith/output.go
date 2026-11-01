@@ -26,6 +26,7 @@ type line struct {
 // writeLines prints each transaction as one JSON object per line.
 func writeLines(w io.Writer, txs []pocketsmith.Transaction) error {
 	enc := json.NewEncoder(w)
+	enc.SetEscapeHTML(false)
 	for _, t := range txs {
 		l := line{
 			ID: t.ID, Date: t.Date.Format(time.DateOnly), Amount: t.Amount, Payee: t.Payee,
