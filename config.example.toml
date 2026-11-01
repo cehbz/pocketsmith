@@ -1,0 +1,4 @@
+# Copy to ~/.config/pocketsmith/config.toml and fill in.
+
+# 1Password reference to the PocketSmith developer key.
+key_ref = "op://VAULT/ITEM/FIELD"
