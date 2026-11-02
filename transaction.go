@@ -23,27 +23,29 @@ type Account struct {
 
 // Transaction is one PocketSmith transaction.
 type Transaction struct {
-	ID          int64
-	Date        time.Time // calendar date, midnight UTC
-	Amount      float64   // a debit is negative
-	Payee       string
-	Category    *Category // nil when uncategorized
-	NeedsReview bool
-	Labels      []string
-	Account     Account
-	Transfer    bool
+	ID             int64
+	Date           time.Time // calendar date, midnight UTC
+	Amount         float64   // a debit is negative
+	Payee          string
+	Category       *Category // nil when uncategorized
+	NeedsReview    bool
+	Labels         []string
+	Account        Account
+	Transfer       bool
+	ClosingBalance float64 // the account's balance after this transaction; zero when PocketSmith gives none
 }
 
 type transaction struct {
-	ID          int64     `json:"id"`
-	Date        string    `json:"date"`
-	Amount      float64   `json:"amount"`
-	Payee       string    `json:"payee"`
-	Category    *Category `json:"category"`
-	NeedsReview bool      `json:"needs_review"`
-	Labels      []string  `json:"labels"`
-	Account     Account   `json:"transaction_account"`
-	Transfer    *bool     `json:"is_transfer"`
+	ID             int64     `json:"id"`
+	Date           string    `json:"date"`
+	Amount         float64   `json:"amount"`
+	Payee          string    `json:"payee"`
+	Category       *Category `json:"category"`
+	NeedsReview    bool      `json:"needs_review"`
+	Labels         []string  `json:"labels"`
+	Account        Account   `json:"transaction_account"`
+	Transfer       *bool     `json:"is_transfer"`
+	ClosingBalance float64   `json:"closing_balance"`
 }
 
 func (t transaction) decode() (Transaction, error) {
@@ -52,15 +54,16 @@ func (t transaction) decode() (Transaction, error) {
 		return Transaction{}, fmt.Errorf("transaction %d date %q: %w", t.ID, t.Date, err)
 	}
 	return Transaction{
-		ID:          t.ID,
-		Date:        d,
-		Amount:      t.Amount,
-		Payee:       t.Payee,
-		Category:    t.Category,
-		NeedsReview: t.NeedsReview,
-		Labels:      t.Labels,
-		Account:     t.Account,
-		Transfer:    t.Transfer != nil && *t.Transfer,
+		ID:             t.ID,
+		Date:           d,
+		Amount:         t.Amount,
+		Payee:          t.Payee,
+		Category:       t.Category,
+		NeedsReview:    t.NeedsReview,
+		Labels:         t.Labels,
+		Account:        t.Account,
+		Transfer:       t.Transfer != nil && *t.Transfer,
+		ClosingBalance: t.ClosingBalance,
 	}, nil
 }
 

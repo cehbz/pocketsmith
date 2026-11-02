@@ -123,3 +123,21 @@ func TestTransactionReadsOne(t *testing.T) {
 		t.Errorf("Transaction = %+v", got)
 	}
 }
+
+func TestTransactionsDecodesTheClosingBalance(t *testing.T) {
+	c, _ := server(t, map[string]http.HandlerFunc{
+		"GET /users/42/transactions": func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte(`[
+				{"id":1,"date":"2026-01-12","amount":-1,"payee":"P","closing_balance":1234.56,"transaction_account":{"id":7,"name":"Card"}},
+				{"id":2,"date":"2026-01-12","amount":-1,"payee":"P","closing_balance":null,"transaction_account":{"id":7,"name":"Card"}}
+			]`))
+		},
+	})
+	got, err := c.Transactions(context.Background(), Query{User: 42, From: date(t, "2026-01-01"), To: date(t, "2026-01-31")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got[0].ClosingBalance != 1234.56 || got[1].ClosingBalance != 0 {
+		t.Errorf("closing balances = %v, %v; want 1234.56, 0", got[0].ClosingBalance, got[1].ClosingBalance)
+	}
+}
